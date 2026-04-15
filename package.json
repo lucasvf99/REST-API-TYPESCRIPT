@@ -1,0 +1,11 @@
+{
+  "name": "pern-stack",
+  "version": "1.0.0",
+  "description": "REST API TYPESCRIPT ",
+  "license": "ISC",
+  "author": "lucas vacca fernandez",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}
