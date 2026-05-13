@@ -34,7 +34,7 @@
 request es lo que envias => req
 response es respuesta => res
 -->
-|16. con send podemos enviar datos a la pantalla, tambien json, res.send o res.json
+16. con send podemos enviar datos a la pantalla, tambien json, res.send o res.json
 17. crear el archivo router para cada request 
 18. importar instancia de router, Router from express, crear constante y llamar funcion Router
 19. importar router en index, para agregarlo usamos use, server.use('/', router)
@@ -158,3 +158,87 @@ response es respuesta => res
  -->
  65. Creamos funcion para eliminar en el handler, hacemos validacion y agregamos middleware
  66. para eliminar usamos la funcion destroy 
+
+ <!-- TESTING  -->
+
+1. Descargar superter en desarrollo con @types/supertest para tener el tipado de typeScript, jest @types/jest ts-jest
+2. en consola npx ts-jest config: init, crea el archivo jest.config.js  
+3. crear carpeta __tests__, crear archivo server.test.ts
+4. agregar en ts config type: [node, jest]
+4. describe esta de forma global, sirve para agrupar serie de pruebas, toma 2 parametros nombre de prueba y segundo un callback
+5. con test o it, primero lo que debe hacer la prueba, segundo parametro un callback
+6. con expect y toBe, expect seria la suma y toBe el resultado
+// test
+//  describe('Nuestro primer test', () => {
+//     it('debería sumar dos números correctamente', () => {
+//         expect(1 + 2).toBe(3)
+//     })
+//      it('la suma no deberia ser 3', () => {
+//         expect(1 + 1).not.toBe(3)
+//     })
+//  })
+<!-- como realizamos el testing? -->
+7. en package.json en scripts creamos el llamado a test : "jest"
+8. con npm test corre la prueba
+9. para testear algo que no esperas se agrega el not antes del toBe expect(1+1).not.toBe(3), aca seria que uno mas uno no sea 3
+
+<!-- utilizar supertest para endpoint  -->
+1. en server.ts despues de router , crear un endpoint get basico que la respuesta sea un json que devuelva un msj
+2. importar reques de supertest en server.test.ts, y server 
+3. usamos la funcion describe, con it declaramos que tiene que hacer y su callback async
+4. creamos un const res = await request(sever).get esto trae la respuesta de server y con console.log mostramos los datos
+5. para que funciones los log, debemos ir a config db.ts, agregarle logging: false
+6. agreagar en el json, test despues de jest --detectOpenHandles
+7. con expect decimos que esperamos un res.status tobe 200
+8. podemos escribir los test que no deberian ser, con not.toBe
+
+<!-- probando los habdlers con supertest -->
+1. crear en handlers la carpeta __test__ y crear archivo .test.ts
+2. crear logica de test, con it nombre + callback, luego constante con await y request a server, con un .post(/api).send, send es lo que vas a enviar, osea un objeto de product
+3. cunado se crea una producto tiene que ser un status 201, ir al handlers y agregarle el status 
+4. toHaveProperty es para ver si tiene o no una propiedad, ej, un id, la respuesta si viene en un objeta data 
+5. podemos testear la validacion antes, podemos pasarle el objeto vacio y escribir la logica
+
+<!-- como limpiar base de datos al hacer pruebas, porq se llena muchas -->
+1. crear carpeta en src llamda data y un archivo index
+2. importamos exit de node:process  y db de config/db
+3. creamos una constante clearDb, una arrow function async y un try catch, en el catch poner un console.log y seguido un exit(1), el uno hace referencia que termina pero con errores
+4. en try con await db.sync({force: true}) elimina los datos y finalizamos con exit
+
+5. llamar funcion if(process.argv[2] === '--clear' ){
+    clearDb()
+}
+6. en package en scripts, pretest : "ts-node ./src/data --clear, en vez de db mejor pretest se ejecuta antes del test
+
+<!-- TEST PARA PETICION TIPO GET, GET(ID), Put, Delete-->
+1. crear funcion describe(url, callback) 
+2. palabra reservada it(string, callback) asincrono
+3. crear constante con await, request(server).get(url)
+4. con expect verificar status y que la respuesta sea json o mas pruebasd
+<!-- 
+En postman podemos realizar una peticion y en base en la respuesta crear los test
+-->
+
+<!-- METRICAS DE VALIDACION -->
+# **CODE COVERAGE
+**METRICA UTILIZADA PARA MEDIR LA CANTIDAD DE CODIGO FUENTE QUE HA SIDO EJECUTADO O CUBIERTO  POR UN CONJUNTO DE PRUEBAS
+1. en package debajo de test, " npm run pretest && test:coverage" : "jest --detectOpenHandles --coverage"
+2. con ese comando se ejecuta primero pretest y luego coverage
+3. se ejecuta con npm run test:coverage
+4. devuelve una tabla con valores 
+        Lines : lineas de archivos ejecutadas almenos una vez
+        Uncovered Line: son las lineas no ejecutadas en los archivos
+        Stmts(statemants): codigo inalcanzable, codigo que no se ejecuta, porciones de codigo
+
+# **# <!Forzar errores para los catchs -->
+1. en server.test
+2. Utilizamos un mock, tecnica para las pruebas, simula comportamiento de ciertos modulos 
+3. importar en server.test mi base de datos 
+4. importar instancia de sequelice ( db )
+5. escribir funcion de testeo para mi base de datos, fallo t exito 
+6. crear el mock antes de la funcion, con jest, jest.mock('../config/db') toma como valor un string 
+7. dentro de la funcion it, jest.spyiOn(db, 'authenticate), crea una funcion simulada, le pasamos la base de datos y le pasamos el metodo que queremos observar
+8. agregamos mockRejectedValueOnce para forzar error y le pasamos un error entre parentesis 
+9. crear constate, luego jest.spyOn(console, 'log')
+10. luego mandamos a llamar a la base de datos
+11. luego utilizamos el expect, pasamos la constante como parametro, luego utilizamos toHaveBeenCalledWith(especial para mock), dentro de los parentesis, va otro expect.stringContaining('string que deseamos verificar)

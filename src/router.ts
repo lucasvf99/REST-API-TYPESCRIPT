@@ -27,7 +27,7 @@ router.post("/",
 
 
 router.patch("/:id",
-    param('id').isInt().withMessage("El id debe ser un número entero"),
+    param('id').isInt().withMessage("ID no valido"),
     body("name")
             .notEmpty().withMessage("El nombre del producto es obligatorio"),
     body("price")
@@ -41,7 +41,7 @@ router.patch("/:id",
 
 router.put("/:id",
 
-    param('id').isInt().withMessage("El id debe ser un número entero"),
+    param('id').isInt().withMessage("ID no valido "), 
     body("name")
             .notEmpty().withMessage("El nombre del producto es obligatorio"),
     body("price")
@@ -55,7 +55,7 @@ router.put("/:id",
 )
 
 router.delete("/:id", 
-    param('id').isInt().withMessage("El id debe ser un número entero"),
+    param('id').isInt().withMessage("Id no valido"),
     handleInputErrors,
     deleteProduct)
 
