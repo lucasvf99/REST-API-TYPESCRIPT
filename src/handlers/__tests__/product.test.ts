@@ -1,5 +1,6 @@
 import request from 'supertest'
 import server from '../../server'
+
 describe('POST /api/products', () => {
 
     it('should display validation errors', async () => {
@@ -9,9 +10,8 @@ describe('POST /api/products', () => {
         expect(response.body.errors).toHaveLength(4) // Verifica que haya 4 errores de validación
 
         expect(response.status).not.toBe(404)
-        expect(response.body.errors).not.toHaveLength(2) // Verifica que no haya 4 errores de validación
+        expect(response.body.errors).not.toHaveLength(2) 
     })
-
 
     it('should validate that the price is greater than 0', async () => {
         const response = await request(server).post('/api/products').send({
@@ -213,8 +213,6 @@ describe('PATCH /api/products/:id', () => {
     }) 
     it('should response a 200 status code when updating availability', async () => {
         const response = await  request(server).patch('/api/products/1').send({
-            name: "monitor - testing",
-            price: 300,
             availability: false
         })
         expect(response.status).toBe(200)

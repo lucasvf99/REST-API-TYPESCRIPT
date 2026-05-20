@@ -1,5 +1,7 @@
 import express from 'express'
 import router from './router'
+import swaggerUi from 'swagger-ui-express'
+import swaggerSpec from './config/swagger'
 import db from './config/db'
 import colors from 'colors'
 
@@ -23,10 +25,8 @@ server.use(express.json())
 
 server.use('/api/products', router)
 
-// supertesting
+//DOCS
+server.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec))
 
-server.get('/api', (req, res) => {
-    res.json({message: 'desde api'}    )
-})
 
 export default server
